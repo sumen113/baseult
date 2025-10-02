@@ -1,4 +1,5 @@
 {
+    "packageManager": "pnpm@10.17.1",
     "name": "nano",
     "description": "A minimalist web proxy built to be simple yet powerful.",
     "contributors": [
@@ -48,6 +49,5 @@
             "esbuild",
             "sqlite3"
         ]
-    },
-    "packageManager": "pnpm@10.17.1"
+    }
 }
