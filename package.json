@@ -9,12 +9,15 @@
     "license": "AGPL-3.0-only",
     "type": "module",
     "packageManager": "pnpm@10.14.0",
-"scripts": {
-  "heroku-prebuild": "corepack enable && corepack prepare pnpm@10.17.1 --activate && pnpm install --no-frozen-lockfile",
-  "build": "vite build",
-  "start": "node index.js"
-},
-
+    "scripts": {
+        "start": "node index.js",
+        "build": "vite build",
+        "build-static": "vite build && node build.js",
+        "dev": "vite dev",
+        "preview": "vite preview",
+        "update": "npx npm-check-updates -u && pnpm i",
+        "revert": "git reset HEAD --hard && git clean -fd"
+    },
     "dependencies": {
         "@mercuryworkshop/wisp-js": "0.3.3",
         "chemicaljs": "^2.3.1",
