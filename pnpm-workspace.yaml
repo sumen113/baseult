@@ -1,5 +1,2 @@
-onlyBuiltDependencies:
-  - bufferutil
-  - dreamland-router
-  - esbuild
-  - sqlite3
+packages:
+  - .

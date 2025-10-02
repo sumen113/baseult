@@ -24,7 +24,8 @@
         "express": "^4.19.2",
         "rollup-plugin-typescript2": "^0.36.0",
         "sortablejs": "^1.15.2",
-        "vite-plugin-dreamland": "^1.2.1"
+        "vite-plugin-dreamland": "^1.2.1",
+        "@mercuryworkshop/wisp-js": "0.3.3"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.20",
@@ -40,5 +41,7 @@
         "overrides": {
             "chemicaljs": "2.3.1"
         }
-    }
+    },
+    "packageManager": "pnpm@9.12.3"
+
 }
