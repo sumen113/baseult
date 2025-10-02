@@ -15,7 +15,8 @@
         "dev": "vite dev",
         "preview": "vite preview",
         "update": "npx npm-check-updates -u && pnpm i",
-        "revert": "git reset HEAD --hard && git clean -fd"
+        "revert": "git reset HEAD --hard && git clean -fd",
+        "heroku-postbuild": "pnpm install --no-frozen-lockfile && pnpm approve-builds && pnpm run build"
     },
     "dependencies": {
         "@mercuryworkshop/wisp-js": "0.3.3",
