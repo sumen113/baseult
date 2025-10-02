@@ -24,11 +24,11 @@
         "dreamland-router": "https://github.com/mercuryworkshop/dreamland-router",
         "express": "^4.19.2",
         "sortablejs": "^1.15.2",
-        "sqlite3": "^5.1.7"
+        "sqlite3": "^5.1.7",
+        "node-gyp-build": "^4.8.4"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.20",
-        "node-gyp-build": "^4.8.4",
         "postcss": "^8.4.42",
         "prettier": "^3.3.3",
         "rollup-plugin-typescript2": "^0.36.0",
