@@ -11,6 +11,9 @@ importers:
 
   .:
     dependencies:
+      '@mercuryworkshop/wisp-js':
+        specifier: 0.3.3
+        version: 0.3.3
       chemicaljs:
         specifier: 2.3.1
         version: 2.3.1(bufferutil@4.0.9)(esbuild@0.21.5)
@@ -2181,7 +2184,7 @@ snapshots:
 
   '@types/minimatch@6.0.0':
     dependencies:
-      minimatch: 3.1.2
+      minimatch: 9.0.5
     optional: true
 
   '@types/node@24.5.2':
