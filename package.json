@@ -41,13 +41,18 @@
         "node": ">=20.11.0"
     },
     "pnpm": {
-        "overrides": {
-            "chemicaljs": "2.3.1"
-        },
-        "onlyBuiltDependencies": [
-            "bufferutil",
-            "esbuild",
-            "sqlite3"
-        ]
-    }
+    "overrides": {
+      "chemicaljs": "2.3.1",
+      "node-gyp-build": "^4.8.4"
+    },
+    "onlyBuiltDependencies": [
+      "bufferutil",
+      "esbuild",
+      "sqlite3",
+      "node-gyp-build"
+    ],
+    "neverBuiltDependencies": [
+      "node-gyp-build"
+    ]
+  }
 }
