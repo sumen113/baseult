@@ -311,15 +311,24 @@ body:not([data-dragging="true"]) .tab:hover .tab-close,
 }
   
 .fav-btn {
-    color: var(--Text);
-    transition: background 0.2s, transform 0.1s;
-    transform: scale(0.9);
+  color: var(--Text);
+  transition: background 0.2s, transform 0.1s;
+  transform: scale(0.9);
 }
-  
+
 .fav-btn:hover {
-    background: var(--Text);
-    transform: scale(1);
+  background: var(--Text);
+  color: var(--Base);
+  transform: scale(1);
 }
+
+/* keep it white after favouriting */
+.fav-btn.favourited {
+  background: var(--Text) !important;
+  color: var(--Base) !important;
+  transform: scale(1);
+}
+
   
 .play-btn {
     transition: background 0.2s, transform 0.1s;
