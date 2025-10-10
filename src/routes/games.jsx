@@ -74,7 +74,29 @@ const Home = function () {
               </div>
 
               <div class="action-row">
-                <button class="play-btn flex-1 py-2 mr-2 rounded-lg bg-Blue text-Crust font-semibold">
+                <button class="play-btn flex-1 py-2 mr-2 rounded-lg bg-Blue text-Crust font-semibold"
+                  on:click={() => {
+    const gamePath = "/tag-online/index.html";
+
+    // Default (if not in an iframe)
+    let targetUrl = gamePath;
+
+    if (window.top !== window.self) {
+      // If inside an iframe, try to extract the parent origin
+      try {
+        const referrer = new URL(document.referrer);
+        targetUrl = `${referrer.origin}${gamePath}`;
+      } catch (err) {
+        // fallback: just open in new tab (in case referrer is blocked)
+        targetUrl = gamePath;
+      }
+
+      window.top.location.href = targetUrl;
+    } else {
+      window.location.href = targetUrl;
+    }
+  }}
+                  >
                   Play
                 </button>
                 <button
