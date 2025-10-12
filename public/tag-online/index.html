@@ -5,58 +5,13 @@
   <link rel="icon" type="image/x-icon" href="./images/logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <script src="http://localhost:3001/socket.io/socket.io.js"></script>
 
-  <script src="client.js"></script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9473688900687998"
-     crossorigin="anonymous"></script>
+  <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-  <div id="join-screen">
-    <h1>TAG ONLINE</h1>
-    <input id="name" type="text" maxlength="12" placeholder="Enter your name">
-    <div class="class-choices">
-      <button class="class-option" data-class="ninja">
-        <img src="images/ninja.png" alt="Ninja">
-      </button>
-      <button class="class-option" data-class="monkey">
-        <img src="images/monkey.png" alt="Monkey">
-      </button>
-      <button class="class-option" data-class="clown">
-        <img src="images/clown.png" alt="clown">
-      </button>
-      <button class="class-option" data-class="snowman">
-        <img src="images/snowman.png" alt="snowman">
-      </button>
-      <button class="class-option" data-class="mole">
-        <img src="images/mole.png" alt="mole">
-      </button>
-      <button class="class-option" data-class="alien">
-        <img src="images/alien.png" alt="alien">
-      </button>
-      <button class="class-option" data-class="scientist">
-        <img src="images/scientist.png" alt="scientist">
-      </button>
-    </div>    
-
-    <button id="join-btn" disabled>Join</button>
-  </div>
-
-  <canvas id="game"></canvas>
-
-  <div id="waiting-screen">
-    <div class="wait-left"></div>
-    <div class="wait-right">
-      <div id="waiting-text">your waiting 4 more players. <br> it might take a bit
-      </div>
-    </div>
-  </div>  
-
-  <div id="ability-ui" class="disabled">
-    <div id="ability-name">waiting...</div>
-    <div id="ability-timer">Ready</div>
-  </div>
   
-  <div id="overlay-message"></div>
+  <div id="app-root"></div>
+  
+  <script src="client.js"></script>
 </body>
 </html>

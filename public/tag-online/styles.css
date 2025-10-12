@@ -93,7 +93,47 @@ body.joined::before {
   margin-bottom: 25px; 
 }
 
+.dropdown { 
+  display: none;
+  transform: scale(0);
+  gap: 5px; 
+  margin-bottom: 0px; 
+  transition: transform 0.3s ease;
+}
+
 .class-option { 
+  width: 70px; 
+  height: 70px; 
+  padding: 0;             /* remove default button padding */
+  border-radius: 20%; 
+  border: 2px solid rgba(255,255,255,0.7); 
+  background: none;       /* no extra background behind image */
+  display: inline-block; 
+  cursor: pointer; 
+  transition: transform 0.3s ease, border 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  transform: scale(0.7);
+}
+
+.class-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;      /* fills the square/rounded button */
+  display: block;         /* removes inline gap */
+  border-radius: 10%;
+}
+
+.class-option:hover { 
+  transform: scale(0.785);
+  box-shadow: 0 0 15px rgba(255,255,255,0.6);
+}
+
+.class-option.selected { 
+  border: 3px solid #fff; 
+  box-shadow: 0 0 20px rgba(255,255,255,0.9);
+}
+
+.class-copys { 
   width: 70px; 
   height: 70px; 
   padding: 0;             /* remove default button padding */
@@ -106,7 +146,7 @@ body.joined::before {
   overflow: hidden;
 }
 
-.class-option img {
+.class-copys img {
   width: 100%;
   height: 100%;
   object-fit: cover;      /* fills the square/rounded button */
@@ -114,12 +154,12 @@ body.joined::before {
   border-radius: 10%;
 }
 
-.class-option:hover { 
+.class-copys:hover { 
   transform: scale(1.15);
   box-shadow: 0 0 15px rgba(255,255,255,0.6);
 }
 
-.class-option.selected { 
+.class-copys.selected { 
   border: 3px solid #fff; 
   box-shadow: 0 0 20px rgba(255,255,255,0.9);
 }
@@ -310,6 +350,241 @@ body.joined #ability-ui:hover:not(.disabled) {
   z-index: 2;
 }
 
+.class-option[data-class="samurai"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-option[data-class="samurai"] img {
+  width: 165%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  left: 1.2px;
+  top: -37px;
+  z-index: 2;
+}
+
+
+
+
+.class-option[data-class="monkey2"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-option[data-class="monkey2"] img {
+  width: 140%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -23px;
+  z-index: 2;
+}
+
+.class-option[data-class="clown2"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-option[data-class="clown2"] img {
+  width: 169%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -41px;
+  left: 1.5px;
+  z-index: 2;
+}
+
+.class-option[data-class="mole2"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-option[data-class="mole2"] img {
+  width: 160%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -37px;
+  left: 2px;
+  z-index: 2;
+}
+
+.class-option[data-class="alien2"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-option[data-class="alien2"] img {
+  width: 140%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -25px;
+  z-index: 2;
+}
+
+.class-option[data-class="scientist2"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-option[data-class="scientist2"] img {
+  width: 155%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -35px;
+  z-index: 2;
+}
+
+.class-option[data-class="snowman2"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-option[data-class="snowman2"] img {
+  width: 210%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -55px;
+  left: 0.3px;
+  z-index: 2;
+}
+
+.class-option[data-class="samurai2"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-option[data-class="samurai2"] img {
+  width: 165%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  left: 1.2px;
+  top: -37px;
+  z-index: 2;
+}
+
+
+
+
+
+.class-copys[data-copy="monkey"] img {
+  transform: scale(1.38);   /* make monkey image larger */
+  position: relative;
+  z-index: 2;              /* bring it above the button */
+}
+
+.class-copys[data-copy="monkey"] {
+  overflow: visible;       /* allow the image to stick out */
+}
+
+.class-copys[data-copy="clown"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-copys[data-copy="clown"] img {
+  width: 175%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -45px;
+  left: 0.3px;
+  z-index: 2;
+}
+
+.class-copys[data-copy="mole"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-copys[data-copy="mole"] img {
+  width: 160%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -37px;
+  z-index: 2;
+}
+
+.class-copys[data-copy="alien"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-copys[data-copy="alien"] img {
+  width: 140%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -25px;
+  z-index: 2;
+}
+
+.class-copys[data-copy="scientist"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-copys[data-copy="scientist"] img {
+  width: 155%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -35px;
+  z-index: 2;
+}
+
+.class-copys[data-copy="snowman"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-copys[data-copy="snowman"] img {
+  width: 175%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -47px;
+  left: 0.3px;
+  z-index: 2;
+}
+
+.class-copys[data-copy="samurai"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-copys[data-copy="samurai"] img {
+  width: 165%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  left: 1.2px;
+  top: -37px;
+  z-index: 2;
+}
+
 .vote-btn {
   padding: 12px 25px;
   font-size: 18px;
@@ -437,3 +712,69 @@ body.joined #ability-ui:hover:not(.disabled) {
 #waiting-screen.active #waiting-text {
   opacity: 1;                 /* fade in when the screen is active */
 }
+
+/* --- Unlock Animation Overlay --- */
+#unlock-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  overflow: hidden;
+  transition: opacity 0.6s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#unlock-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.unlock-strip {
+  display: flex;
+  align-items: center;
+  animation: spinCharacters 4s cubic-bezier(0.25, 1, 0.5, 1);
+  transform: translateX(0);
+}
+
+.unlock-strip img {
+  width: 120px;
+  height: 120px;
+  margin: 0 30px;
+  filter: brightness(0.7);
+  transition: transform 0.3s, filter 0.3s;
+  z-index: 5;
+}
+
+.unlock-strip img.highlight {
+  transform: scale(1.4);
+}
+
+.unlock-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140px;
+  height: 140px;
+  transform: translate(-50%, -50%);
+  border: 4px solid white;
+  border-radius: 16px;
+  box-shadow: 0 0 20px 5px white;
+}
+
+.unlock-text {
+  position: absolute;
+  bottom: 10%;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-family: "Quicksand", sans-serif;
+  font-size: 28px;
+}
+
