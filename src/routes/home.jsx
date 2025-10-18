@@ -300,7 +300,7 @@ const Home = function () {
                         toggleSidebar("tabs");
                         break;
                     case "g":
-                        window.location.href = "https://worried-timi-pixarc-db03c996.koyeb.app/games";
+                        window.location.href = "http://sumensite-production-c9e2.up.railway.app/games";
                         break;
                     case "s":
                         toggleSidebar("settings");
@@ -378,7 +378,7 @@ const Home = function () {
                         <ViewSidebar class="sidebar-animated" />
                     </button>
                     <button
-                        on:click={() => window.location.href = "https://worried-timi-pixarc-db03c996.koyeb.app/games"}
+                        on:click={() => window.location.href = "http://sumensite-production-c9e2.up.railway.app/games"}
                         aria-label="Games"
                         title={use`Games (${this.actionKey}+G))`}
                         class="sidebar-animation h-8 w-8 rounded-full flex justify-center items-center ml-1 p-2"
