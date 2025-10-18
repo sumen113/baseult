@@ -1,4 +1,3 @@
-import { ChemicalServer } from "chemicaljs";
 import express from "express";
 import { execSync } from "node:child_process";
 import fs from "node:fs";
@@ -11,10 +10,7 @@ if (!fs.existsSync("dist")) {
   console.log("Done");
 }
 
-const [app] = new ChemicalServer({
-  scramjet: false,
-  rammerhead: false,
-});
+const app = express();
 
 const httpServer = createServer(app);
 
@@ -46,8 +42,6 @@ app.use((req, res, next) => {
     res.sendFile("dist/index.html", { root: "." });
   }
 });
-
-app.serveChemical();
 
 httpServer.listen(port, () => {
   console.log(`sumensite put on http://localhost:${port}`);

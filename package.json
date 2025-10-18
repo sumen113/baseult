@@ -20,7 +20,6 @@
     },
     "dependencies": {
         "@mercuryworkshop/wisp-js": "0.3.3",
-        "chemicaljs": "^2.3.1",
         "dreamland": "^0.0.24",
         "dreamland-router": "https://github.com/mercuryworkshop/dreamland-router",
         "express": "^4.19.2",
@@ -42,9 +41,6 @@
         "node": ">=20.11.0"
     },
 "pnpm": {
-  "overrides": {
-    "chemicaljs": "2.3.1"
-  },
   "onlyBuiltDependencies": [
     "bufferutil",
     "esbuild",
