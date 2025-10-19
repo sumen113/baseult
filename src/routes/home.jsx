@@ -331,6 +331,15 @@ const Home = function () {
 
     addKeybinds();
 
+    // --- Auto-load URL from hash like #url=https://example.com ---
+    const hash = window.location.hash;
+    if (hash && hash.startsWith("#url=")) {
+        const target = decodeURIComponent(hash.slice(5)); // remove '#url='
+        console.log("Opening from hash:", target);
+        newTab(target, target);
+    }
+
+
     return (
         <div>
             <Head
