@@ -10,7 +10,6 @@ const Home = function () {
   this.cloakTitle = localStorage.getItem("@nano/cloak/title") || "";
   this.cloakIcon = localStorage.getItem("@nano/cloak/icon") || "";
 
-  // ✅ You can now use `newTab` and `goldBorder`
   this.games = [
     {
       name: "Suggest a game",
@@ -25,6 +24,55 @@ const Home = function () {
       link: "/tag-online",
       newTab: false,
       goldBorder: true,
+    },
+    {
+      name: "Happy Wheels",
+      icon: "tag-online/tagonline.png",
+      link: "/happy-wheels",
+      newTab: false,
+      goldBorder: false,
+    },
+    {
+      name: "Drive Mad",
+      icon: "tag-online/tagonline.png",
+      link: "/drive-mad",
+      newTab: false,
+      goldBorder: false,
+    },
+    {
+      name: "Funny Shooter2",
+      icon: "tag-online/tagonline.png",
+      link: "/funny-shooter2",
+      newTab: false,
+      goldBorder: false,
+    },
+    {
+      name: "Time Shooter3",
+      icon: "tag-online/tagonline.png",
+      link: "/time-shooter3",
+      newTab: false,
+      goldBorder: false,
+    },
+    {
+      name: "Stickman Hook",
+      icon: "tag-online/tagonline.png",
+      link: "/stickman-hook",
+      newTab: false,
+      goldBorder: false,
+    },
+    {
+      name: "Basketball Legends",
+      icon: "tag-online/tagonline.png",
+      link: "/basketball-legends",
+      newTab: false,
+      goldBorder: false,
+    },
+    {
+      name: "Football Legends",
+      icon: "tag-online/tagonline.png",
+      link: "/football-legends",
+      newTab: false,
+      goldBorder: false,
     },
   ];
 
@@ -59,7 +107,6 @@ const Home = function () {
         bind:cloakIcon={use(this.cloakIcon)}
       />
 
-      {/* 🔍 Search Bar */}
       <div class="flex justify-center fixed top-0 right-0 left-0 z-50">
         <div class="flex items-center flex-1 gap-2 bg-Base rounded-[26px] p-1.5 my-2 mx-5 max-w-3xl shadow">
           <button
