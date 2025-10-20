@@ -1,4 +1,4 @@
-const App = function () {
+const SettingsIcon = function () {
   return (
   <svg 
     version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="800px" height="800px" fill="#ffffff00" stroke="#ffffff">
@@ -12,4 +12,4 @@ const App = function () {
   </svg>
     );
 };
-export default App;
+export default SettingsIcon;
