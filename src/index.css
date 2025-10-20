@@ -220,6 +220,15 @@ body:not([data-dragging="true"]) .tab:not([data-current="true"]) {
 .window[data-current="false"] {
     display: none;
 }
+.window.fullscreen {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999;
+  border: none !important;
+}
 
 .tab-close {
     transition: opacity 0.1s ease;
