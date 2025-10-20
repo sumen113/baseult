@@ -6,7 +6,7 @@ import ArrowLeft from "../icons/arrow-left";
 import RotateCW from "../icons/rotate-cw";
 import ViewSidebar from "../icons/view-sidebar";
 import Game from "../icons/game";
-import App from "../icons/plus";
+import App from "../icons/app";
 import SettingsIcon from "../icons/settings";
 import { searchURL } from "../util/searchURL";
 import Settings from "../components/settings";
