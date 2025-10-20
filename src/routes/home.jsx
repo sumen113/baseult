@@ -331,13 +331,17 @@ const Home = function () {
 
     addKeybinds();
 
-    // --- Auto-load URL from hash like #url=https://example.com ---
+        // --- Auto-load URL from hash like #url=https://example.com ---
     const hash = window.location.hash;
+    this.hideUI = false;
+    
     if (hash && hash.startsWith("#url=")) {
         const target = decodeURIComponent(hash.slice(5)); // remove '#url='
         console.log("Opening from hash:", target);
+        this.hideUI = true;
         newTab(target, target);
     }
+
 
 
     return (
@@ -375,6 +379,7 @@ const Home = function () {
                 bind:searchEngine={use(this.searchEngine)}
                 createIFrame={createIFrame}
             />
+            {!this.hideUI && (
             <div class="flex justify-center fixed bottom-0 right-0 left-0">
                 <div class="flex items-center flex-1 gap-2 bg-Base rounded-[26px] p-1.5 my-2 mx-5 max-w-3xl shadow">
                     <button
@@ -438,6 +443,7 @@ const Home = function () {
                     </button>
                 </div>
             </div>
+            )}
         </div>
     );
 };
