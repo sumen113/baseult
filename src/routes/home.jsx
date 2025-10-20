@@ -66,37 +66,40 @@ const Home = function () {
     });
 
     const createIFrame = async (tab) => {
-        const newIFrame = document.createElement("iframe");
-        newIFrame.src = await searchURL(tab.url, this.searchEngine);
-        newIFrame.classList = "window h-full w-full";
-        newIFrame.dataset.current = "true";
-        newIFrame.addEventListener("load", (e) => {
-            addKeybinds(e.target.contentWindow);
-            interceptLinks(e.target.contentWindow);
-            setIcon(this.current);
+    const newIFrame = document.createElement("iframe");
+    newIFrame.src = await searchURL(tab.url, this.searchEngine);
+    newIFrame.classList = "window h-full w-full";
 
-            tab.url = window.__uv$config.decodeUrl(
-                e.target.contentWindow.location.pathname.split(
-                    window.__uv$config.prefix,
-                )[1],
-            );
-            if (this.search) {
-                if (this.tabs[this.current].hasOwnProperty("url")) {
-                    this.search.value = this.tabs[this.current].url || "";
-                } else {
-                    this.search.value = "";
-                }
-            }
+    if (this.hideUI) {
+        newIFrame.classList.add("fullscreen");
+    }
 
-            let newTitle = e.target.contentWindow.document.title;
-            if (newTitle !== tab.title) {
-                tab.title = newTitle || tab.url;
-                updateTitles();
-            }
-        });
-        this.windows.appendChild(newIFrame);
-        return newIFrame;
-    };
+    newIFrame.dataset.current = "true";
+    newIFrame.addEventListener("load", (e) => {
+        addKeybinds(e.target.contentWindow);
+        interceptLinks(e.target.contentWindow);
+        setIcon(this.current);
+
+        tab.url = window.__uv$config.decodeUrl(
+            e.target.contentWindow.location.pathname.split(
+                window.__uv$config.prefix,
+            )[1],
+        );
+        if (this.search) {
+            this.search.value = this.tabs[this.current].url || "";
+        }
+
+        let newTitle = e.target.contentWindow.document.title;
+        if (newTitle !== tab.title) {
+            tab.title = newTitle || tab.url;
+            updateTitles();
+        }
+    });
+
+    this.windows.appendChild(newIFrame);
+    return newIFrame;
+};
+
 
     const searchKeydown = async (e) => {
         if (e.key == "Enter" && window.chemical.loaded && e.target.value) {
