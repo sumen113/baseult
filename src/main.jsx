@@ -5,6 +5,7 @@ import Privacy from "./routes/privacy";
 import Terms from "./routes/terms";
 import Error from "./routes/error";
 import Games from "./routes/games";
+import Apps from "./routes/games";
 import "./index.css";
 
 new Router(
