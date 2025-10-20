@@ -6,6 +6,7 @@ import ArrowLeft from "../icons/arrow-left";
 import RotateCW from "../icons/rotate-cw";
 import ViewSidebar from "../icons/view-sidebar";
 import Game from "../icons/game";
+import App from "../icons/plus";
 import SettingsIcon from "../icons/settings";
 import { searchURL } from "../util/searchURL";
 import Settings from "../components/settings";
@@ -305,6 +306,9 @@ const Home = function () {
                     case "g":
                         window.location.href = "https://sumensite-production-c9e2.up.railway.app/games";
                         break;
+                    case "a":
+                        window.location.href = "https://sumensite-production-c9e2.up.railway.app/apps";
+                        break;
                     case "s":
                         toggleSidebar("settings");
                         break;
@@ -402,7 +406,14 @@ const Home = function () {
                     >
                         <Game class="sidebar-animated" />
                     </button>
-
+                    <button
+                        on:click={() => window.location.href = "https://sumensite-production-c9e2.up.railway.app/apps"}
+                        aria-label="Apps"
+                        title={use`Apps (${this.actionKey}+A))`}
+                        class="sidebar-animation h-8 w-8 rounded-full flex justify-center items-center ml-1 p-2"
+                    >
+                        <App class="sidebar-animated" />
+                    </button>
                     <button
                         on:click={() => toggleSidebar("settings")}
                         aria-label="Settings Sidebar"
@@ -415,7 +426,7 @@ const Home = function () {
                     <div class="bg-Surface0 w-[2px] h-[calc(100%_-_1.25rem)] mr-1"></div>
                     <input
                         autofocus
-                        bind:this={use(this.search)}
+                        bind:this={use(this.search)}  
                         on:keydown={searchKeydown}
                         placeholder="Search or Type URL"
                         class="flex-1 border-0 bg-transparent outline-none h-10 w-full placeholder:select-none placeholder:text-Subtext0"
