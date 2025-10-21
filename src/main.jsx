@@ -5,6 +5,7 @@ import Privacy from "./routes/privacy";
 import Terms from "./routes/terms";
 import Error from "./routes/error";
 import Games from "./routes/games";
+import Apps from "./routes/apps";
 import "./index.css";
 
 new Router(
@@ -14,6 +15,7 @@ new Router(
             <Route path="/privacy" show={<Privacy />} />
             <Route path="/terms" show={<Terms />} />
             <Route path="/games" show={<Games />} />
+            <Route path="/apps" show={<Apps />} />
             <Route path="*" show={<Error />} />
         </Route>
     ),

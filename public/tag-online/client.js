@@ -432,7 +432,7 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-function unlockRandomCharacter() {
+function Ohlittlemonk() {
   const allClasses = [
     "monkey",
     "clown",
@@ -935,7 +935,7 @@ socket.on("freeze", ({ duration, userId }) => {
 });
 
 socket.on("charSpinClaimed", () => {
-  unlockRandomCharacter();
+  Ohlittlemonk();
 });
 
 socket.on("tryClaimCharSpin", () => {
