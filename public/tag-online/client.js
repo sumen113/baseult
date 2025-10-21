@@ -934,6 +934,18 @@ socket.on("freeze", ({ duration, userId }) => {
   }, duration);
 });
 
+function showOverlayMessage(text, color = "white", duration = 3000) {
+  const overlay = document.getElementById("overlay-message");
+  overlay.style.color = color;
+  overlay.style.fontSize = "48px";
+  overlay.style.textAlign = "center";
+  overlay.style.textShadow = "0 0 10px black";
+  overlay.textContent = text;
+  overlay.classList.add("show");
+
+  setTimeout(() => overlay.classList.remove("show"), duration);
+}
+
 socket.on("charSpinClaimed", () => {
   Ohlittlemonk();
 });

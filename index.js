@@ -255,6 +255,8 @@ function startGame() {
   spawnPortals();
   // Spawn the character spin once at a random time this round
   const randomDelay = Math.floor(Math.random() * 170000)
+  const spawnTime = Date.now() + randomDelay;
+  console.log(`CharSpin will spawn in ${randomDelay} ms at ${new Date(spawnTime).toLocaleTimeString()}`);
   charSpinSpawnTimeout = setTimeout(() => {
     spawnCharSpin();
   }, randomDelay);
@@ -343,6 +345,7 @@ function spawnCharSpin() {
   const y = pl.y - 0.04;
 
   console.log("Spawning char spin at", x, y);
+  io.emit("spawnedd");
 
   charSpins = [{ x, y, active: true }];
   charSpinSpawnedThisRound = true;
@@ -722,6 +725,7 @@ io.on("connection", (socket) => {
 
     socket.on("claimCharSpin", () => {
       io.to(socket.id).emit("charSpinClaimed");
+      io.emit("claimedd");
     });
 
     socket.on("voteMap", (index) => {
