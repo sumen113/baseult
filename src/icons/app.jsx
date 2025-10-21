@@ -13,13 +13,9 @@ const SettingsIcon = function () {
     stroke-linejoin="round"
     stroke-linecap="round"
 >
-    <!-- Top-left -->
     <rect x="40" y="-920" width="400" height="400" rx="60" />
-    <!-- Top-right -->
     <rect x="520" y="-920" width="400" height="400" rx="60" />
-    <!-- Bottom-left -->
     <rect x="40" y="-440" width="400" height="400" rx="60" />
-    <!-- Bottom-right -->
     <rect x="520" y="-440" width="400" height="400" rx="60" />
 </svg>
 
