@@ -54,7 +54,7 @@ httpServer.listen(port, () => {
 
 
 const TICK_RATE = 60;
-const GAME_DURATION = 180;
+let GAME_DURATION = 180;
 let jumpForce = -0.03; 
 const TAG_COOLDOWN = 500; 
 
@@ -79,14 +79,10 @@ const SPECIAL_USERNAMES = {
   sumen: "nolifeloser",
   donaldtrumpy: "67isgood",
   IShowMonkey: "applepenus67",
-  "Clip God": "reyreyiscool",
-  Aura: "password67",
-  MonkeyDLuffy: "jamiemonkey",
   SKILLZ: "jadie",
-  Goten: "jbhifi",
 };
 
-const MAP_NAMES = ["Grass", "Moon", "Ice"];
+const MAP_NAMES = ["Grass", "Ice", "Zombie Infection"];
 
 const MAPS = [
 
@@ -115,21 +111,27 @@ const MAPS = [
   ],
 
   [
-    { x: 0, y: 0.89, w: 2.0, h: 0.03, type: "static" }, 
-
-    { x: 0.05, y: 0.75, w: 0.25, h: 0.03, type: "static" },
-    { x: 0.3, y: 0.62, w: 0.25, h: 0.03, type: "static" },
-
-    { x: 1.4, y: 0.75, w: 0.25, h: 0.03, type: "static" },
-    { x: 1.1, y: 0.62, w: 0.25, h: 0.03, type: "static" },
-
-    { x: 0.55, y: 0.48, w: 0.45, h: 0.03, type: "static" },
-
-    { x: 0.2, y: 0.35, w: 0.25, h: 0.03, type: "static" },
-
-    { x: 1.3, y: 0.35, w: 0.25, h: 0.03, type: "static" },
-
-    { x: 0.75, y: 0.2, w: 0.35, h: 0.03, type: "static" },
+    // Ground — long icy base
+    { x: 0, y: 0.89, w: 2.0, h: 0.03, type: "static" },
+  
+    // Lower mid-tier platforms
+    { x: 0.1, y: 0.78, w: 0.4, h: 0.03, type: "static" },
+    { x: 1.2, y: 0.78, w: 0.45, h: 0.03, type: "static" },
+  
+    // Mid-level icy shelves
+    { x: 0.4, y: 0.65, w: 0.5, h: 0.03, type: "static" },
+    { x: 1.0, y: 0.55, w: 0.45, h: 0.03, type: "static"}, // slight tilt
+  
+    // Floating chunk near center (risk of sliding off)
+    { x: 0.75, y: 0.45, w: 0.25, h: 0.03, type: "static" },
+  
+    // Narrow ledges
+    { x: 0.25, y: 0.36, w: 0.2, h: 0.03, type: "static" },
+    { x: 1.35, y: 0.36, w: 0.2, h: 0.03, type: "static" },
+  
+    // High top platforms (good for sniping or rewards)
+    { x: 0.55, y: 0.25, w: 0.3, h: 0.03, type: "static" },
+    { x: 1.1, y: 0.2, w: 0.3, h: 0.03, type: "static" },
   ],
 
   [
@@ -193,13 +195,14 @@ const DECORATIONS = [
 ];
 
 let decorations = DECORATIONS[0];
+let currentMapName = MAP_NAMES[0];
 
 
 let groundHeight = 0.1;
 
 let gameRunning = false;
 let countdown = 3;
-let timer = GAME_DURATION;
+let timer = 50;
 let itPlayer = null;
 
 let votes = {};
@@ -224,11 +227,20 @@ function finishVoting() {
   let chosen = winners[Math.floor(Math.random() * winners.length)];
   platforms = MAPS[chosen];
   decorations = DECORATIONS[chosen];
-  gravity = chosen === 1 ? 0.0005 : 0.0006; 
-  jumpForce = chosen === 1 ? -0.025 : -0.015; 
+  currentMapName = MAP_NAMES[chosen]; // 🆕 track current map
 
-  FRICTION = chosen === 2 ? 0.94 : 0.85; 
-  globalThis.ACCEL_MULT = chosen === 2 ? 1.1 : 1.0; 
+  if (currentMapName === "Zombie Infection") {
+    GAME_DURATION = 45; // shorter infection round
+    io.emit("zominpla")
+  } else {
+    GAME_DURATION = 180; // normal duration
+  }
+
+  gravity = 0.0006; 
+  jumpForce = -0.015; 
+
+  FRICTION = chosen === 1 ? 0.94 : 0.85; 
+  globalThis.ACCEL_MULT = chosen === 1 ? 1.1 : 1.0; 
 
   io.emit("mapChosen", chosen);
   io.emit("initGame"); 
@@ -281,10 +293,29 @@ function startTimer() {
     timer--;
     io.emit("timer", timer);
     if (timer <= 0) {
-      gameRunning = false;
-      if (itPlayer) io.emit("loser", players[itPlayer]?.name || "Someone");
-      resetGame();
-      clearInterval(timerInterval);
+      if (currentMapName === "Zombie Infection") {
+        const nonInfected = Object.values(players).filter(p => !p.isIt);
+        if (nonInfected.length === 0) {
+          gameRunning = false;
+          io.emit("message", "Infected has won", 3000);
+          resetGame();
+          clearInterval(timerInterval);
+        }else{
+          gameRunning = false;
+          io.emit("message", "Survivors have won", 3000);
+          const survivors = Object.values(players).filter(p => !p.isIt);
+          for (const survivor of survivors) {
+            io.to(getSocketIdByPlayerName(survivor.name)).emit("surzom");
+          }
+          resetGame();
+          clearInterval(timerInterval);
+        }
+      }else{
+        gameRunning = false;
+        io.emit("loser", players[itPlayer]?.name || "Someone");
+        resetGame();
+        clearInterval(timerInterval);
+      }    
     }
   }, 1000);
 }
@@ -305,6 +336,7 @@ function resetGame() {
 
     platforms = MAPS[0];
     decorations = DECORATIONS[0];
+    currentMapName = MAP_NAMES[0];
   }
 }
 
@@ -604,21 +636,36 @@ function applyPhysics(dt) {
       const dx = it.x - p.x;
       const dy = it.y - p.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
-
+  
       if (
         distance < it.hitRadius + p.hitRadius &&
         now - (it.lastTagged || 0) > TAG_COOLDOWN
       ) {
-
-        it.isIt = false;
         it.lastTagged = now;
-        itPlayer = id;
-        players[itPlayer].isIt = true;
-        players[itPlayer].lastTagged = now;
+  
+        // Infection mode logic:
+        if (currentMapName === "Zombie Infection") {
+          // Tagger STAYS infected
+          p.isIt = true;
+          p.lastTagged = now;
+          io.to(itPlayer).emit("tagvar");
+          const nonInfected = Object.values(players).filter(p => !p.isIt);
+          if (nonInfected.length === 0) {
+            gameRunning = false;
+            io.emit("message", "Infected has won", 3000);
+            resetGame();
+          }
+        } else {
+          it.isIt = false;
+          itPlayer = id;
+          players[itPlayer].isIt = true;
+          players[itPlayer].lastTagged = now;
+        }
+  
         break;
       }
     }
-  }
+  }  
 }
 
 const MS_PER_TICK = 1000 / TICK_RATE;
@@ -651,6 +698,13 @@ setInterval(() => {
     itPlayer,
   });
 }, 1000 / TICK_RATE);
+
+function getSocketIdByPlayerName(name) {
+  for (const [id, p] of Object.entries(players)) {
+    if (p.name === name) return id;
+  }
+  return null;
+}
 
 io.on("connection", (socket) => {
   socket.on("join", ({ name, password, class: playerClass }) => {
@@ -699,11 +753,15 @@ io.on("connection", (socket) => {
     if (!matched && finalName === "")
       finalName = "Guest" + Math.floor(Math.random() * 1000);
 
+    const spawnPlatform = platforms[Math.floor(Math.random() * platforms.length)];
+    const spawnX = spawnPlatform.x + Math.random() * spawnPlatform.w;
+    const spawnY = spawnPlatform.y - 0.05; // slightly above platform
+
     players[socket.id] = {
       name: finalName,
       class: playerClass,
-      x: 0.5,
-      y: 0.5,
+      x: spawnX,
+      y: spawnY,
       vx: 0,
       vy: 0,
       radius: 0.02,
@@ -1061,6 +1119,20 @@ io.on("connection", (socket) => {
           p.vy = originalVy;
         }
       }, dashDuration);
+    }
+
+    if (p.class === "snowman3") {
+
+      io.emit("freeze", {
+        duration: 3000,
+        userId: socket.id, 
+      });
+
+      for (let id in players) {
+        if (id !== socket.id) {
+          players[id].frozenUntil = Date.now() + 3000;
+        }
+      }
     }
   });
 

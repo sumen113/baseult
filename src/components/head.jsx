@@ -8,7 +8,7 @@ const Head = function () {
         if (this.cloakTitle) {
             document.title = this.cloakTitle;
         } else {
-            document.title = "sumensite";
+            document.title = "Home";
         }
         localStorage.setItem("@nano/cloak/title", this.cloakTitle);
     });
@@ -19,7 +19,7 @@ const Head = function () {
                 this.cloakIcon;
         } else {
             window.document.querySelector("link[rel='icon']").href =
-                "/logo.svg";
+                "/logo.png";
         }
         localStorage.setItem("@nano/cloak/icon", this.cloakIcon);
     });

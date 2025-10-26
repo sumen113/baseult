@@ -1,9 +1,10 @@
 body {
-  color: white;
+  color: rgb(255, 255, 255);
   margin: 0;
   overflow: hidden;
   font-family: 'Quicksand', sans-serif;
   position: relative;
+  background-color: #d7fffd;
 }
 
 /* keep the dark background intact — DO NOT fade it on joined */
@@ -50,17 +51,28 @@ body.joined::before {
 }
 
 #join-screen h1 { 
+  color: rgb(218, 138, 63);
   font-size: 3rem; 
   margin-bottom: 30px; 
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 0 4px 15px rgba(0,0,0,0.5);
   transition: transform 0.3s ease;
+  text-align: center;
 }
 
 #join-screen h1:hover {
   transform: scale(1.05) rotate(-1deg);
 }
+
+/* 🟠 Add this */
+#join-screen h1 .pumpkin {
+  width: 1em;           /* same height as the text */
+  height: auto;
+  vertical-align: middle;
+  transform: translateY(-10px); /* adjust to align perfectly */
+}
+
 
 #join-screen input { 
   padding: 12px; 
@@ -319,6 +331,21 @@ body.joined #ability-ui:hover:not(.disabled) {
   z-index: 2;
 }
 
+.class-option[data-class="zombie"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-option[data-class="zombie"] img {
+  width: 140%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -20px;
+  z-index: 2;
+}
+
 .class-option[data-class="scientist"] {
   overflow: visible;        /* allow sticking out */
   display: flex;            /* use flexbox to center */
@@ -350,6 +377,22 @@ body.joined #ability-ui:hover:not(.disabled) {
   z-index: 2;
 }
 
+.class-option[data-class="snowman3"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-option[data-class="snowman3"] img {
+  width: 175%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -47px;
+  left: 0.3px;
+  z-index: 2;
+}
+
 .class-option[data-class="samurai"] {
   overflow: visible;        /* allow sticking out */
   display: flex;            /* use flexbox to center */
@@ -366,8 +409,21 @@ body.joined #ability-ui:hover:not(.disabled) {
   z-index: 2;
 }
 
+.class-option[data-class="ghost"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
 
-
+.class-option[data-class="ghost"] img {
+  width: 130%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  left: 0.9px;
+  top: -17px;
+  z-index: 2;
+}
 
 .class-option[data-class="monkey2"] {
   overflow: visible;        /* allow sticking out */
@@ -431,6 +487,21 @@ body.joined #ability-ui:hover:not(.disabled) {
   z-index: 2;
 }
 
+.class-option[data-class="zombie2"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-option[data-class="zombie2"] img {
+  width: 130%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -10px;
+  z-index: 2;
+}
+
 .class-option[data-class="scientist2"] {
   overflow: visible;        /* allow sticking out */
   display: flex;            /* use flexbox to center */
@@ -475,6 +546,22 @@ body.joined #ability-ui:hover:not(.disabled) {
   position: relative;
   left: 1.2px;
   top: -37px;
+  z-index: 2;
+}
+
+.class-option[data-class="ghost2"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-option[data-class="ghost2"] img {
+  width: 130%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  left: 0.9px;
+  top: -17px;
   z-index: 2;
 }
 
@@ -582,6 +669,37 @@ body.joined #ability-ui:hover:not(.disabled) {
   position: relative;
   left: 1.2px;
   top: -37px;
+  z-index: 2;
+}
+
+.class-copys[data-copy="zombie"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-copys[data-copy="zombie"] img {
+  width: 140%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -23px;
+  z-index: 2;
+}
+
+.class-copys[data-copy="ghost"] {
+  overflow: visible;        /* allow sticking out */
+  display: flex;            /* use flexbox to center */
+  justify-content: center;  /* center horizontally */
+  align-items: flex-start;  /* align to the top of button */
+}
+
+.class-copys[data-copy="ghost"] img {
+  width: 130%;          /* smaller than the button */
+  height: auto;
+  position: relative;
+  top: -17px;
+  left: 0.8px;
   z-index: 2;
 }
 
@@ -778,3 +896,158 @@ body.joined #ability-ui:hover:not(.disabled) {
   font-size: 28px;
 }
 
+.quests {
+  position: relative;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  padding-block: 0.5rem;
+  padding-inline: 1.25rem;
+  background-color: rgb(226, 138, 23);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffff;
+  gap: 10px;
+  font-weight: bold;
+  border: 3px solid #ffffff4d;
+  outline: none;
+  overflow: hidden;
+  font-size: 15px;
+  cursor: pointer;
+  font-family: 'Quicksand', sans-serif;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  transition: all 0.3s ease-in-out;
+}
+
+.quests:hover {
+  transform: scale(1.05);
+  border-color: #fff9;
+}
+
+.quests:hover .icon {
+  transform: translate(4px);
+}
+
+.quests:hover::before {
+  animation: shine 1.5s ease-out infinite;
+}
+
+.quests::before {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100%;
+  background-image: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0) 70%
+  );
+  top: 0;
+  left: -100px;
+  opacity: 0.6;
+}
+
+@keyframes shine {
+  0% {
+    left: -100px;
+  }
+
+  60% {
+    left: 100%;
+  }
+
+  to {
+    left: 100%;
+  }
+}
+
+#quest-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Quest Box */
+.quest-box {
+  background: #e7e7e7;
+  padding: 24px;
+  border-radius: 16px;
+  width: 320px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff3b3b;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.quest-box h2 {
+  margin: 0 0 16px 0;
+  font-weight: 700;
+  color: #444;
+}
+
+.quest {
+  margin-bottom: 16px;
+}
+
+.quest-title {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-bar {
+  background: #bfbfbf;
+  border-radius: 12px;
+  height: 14px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: #7fd3dd;
+  height: 100%;
+  width: 0%;
+  border-radius: 12px;
+  transition: width 0.4s ease;
+}
+
+.reward-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #ccc;
+}

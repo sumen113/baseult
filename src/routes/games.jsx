@@ -74,6 +74,13 @@ const Home = function () {
       newTab: false,
       goldBorder: false,
     },
+    {
+      name: "Shell Shockers",
+      icon: "shell-shockers/logo.png",
+      link: "/shell-shockers",
+      newTab: false,
+      goldBorder: false,
+    },
   ];
 
   // Load favourites

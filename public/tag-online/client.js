@@ -7,6 +7,34 @@ function saveUnlockedClasses(classes) {
   localStorage.setItem("unlockedClasses", JSON.stringify(classes));
 }
 
+// Helper to get a cookie value
+function getCookie(name) {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? decodeURIComponent(match[2]) : null;
+}
+
+// Helper to set a cookie
+function setCookie(name, value, days = 365) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+// Load saved value or default to 0
+// Load all quest progress from cookie
+let questData = JSON.parse(getCookie("questData") || "{}");
+
+// Provide defaults for any missing ones
+if (!questData.zomVar) questData.zomVar = 0;
+if (!questData.tagVar) questData.tagVar = 0;
+if (!questData.playVar) questData.playVar = 0;
+
+// Helper to save it
+function saveQuestData() {
+  setCookie("questData", JSON.stringify(questData));
+}
+
+
+
 let unlockedClasses = getUnlockedClasses();
 
 const unlocked = new Set(unlockedClasses);
@@ -20,6 +48,8 @@ const allClasses = [
   "alien",
   "scientist",
   "samurai",
+  "ghost",
+  "zombie"
 ];
 
 const hasLocked = allClasses.some((c) => !unlocked.has(c));
@@ -27,201 +57,206 @@ const hasLocked = allClasses.some((c) => !unlocked.has(c));
 const root = document.getElementById("app-root");
 
 // Load different HTML structure depending on lock state
-if (hasLocked) {
-  root.innerHTML = `
-    <style>
-      /* Define the hover style using the CSS variable */
-      .class-option {
-        transform: scale(1);
-      }
-      .class-option:hover {
-        transform: scale(1.15);
-      }
-    </style>
-    <div id="join-screen">
-    <h1>TAG ONLINE</h1>
-    <input id="name" type="text" maxlength="12" placeholder="Enter your name">
-    <div class="class-choices">
+root.innerHTML = `
+  <div id="join-screen">
+  <button onclick="openQuestOverlay()" class="quests">
+    Quests
+    <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+      <path
+        fill-rule="evenodd"
+        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+        clip-rule="evenodd"
+      ></path>
+    </svg>
+  </button>
+
+  <h1 class="title">
+    TAG <img src="images/pumpkin.png" alt="Pumpkin" class="pumpkin">NLINE<br>
+    The Haloween Update
+  </h1>
+  <input id="name" type="text" maxlength="12" placeholder="Enter your name">
+  <div class="class-choices">
+    <button data-copy="ninja" class="class-copys">
+      <img src="images/ninja.png" alt="Ninja">
+    </button>
+    <button data-copy="monkey" class="class-copys">
+      <img src="images/monkey.png" alt="Monkey">
+    </button>
+    <button data-copy="clown" class="class-copys">
+      <img src="images/clown.png" alt="Clown">
+    </button>
+    <button data-copy="snowman" class="class-copys">
+      <img src="images/snowman.png" alt="Snowman">
+    </button>
+    <button data-copy="mole" class="class-copys">
+      <img src="images/mole.png" alt="Mole">
+    </button>
+    <button data-copy="alien" class="class-copys">
+      <img src="images/alien.png" alt="Alien">
+    </button>
+    <button data-copy="scientist" class="class-copys">
+      <img src="images/scientist.png" alt="Scientist">
+    </button>
+    <button data-copy="samurai" class="class-copys">
+      <img src="images/samurai.png" alt="Samurai">
+    </button>
+    <button data-copy="zombie" class="class-copys">
+      <img src="images/zombie.png" alt="Zombie">
+    </button>
+    <button data-copy="ghost" class="class-copys">
+      <img src="images/ghost.png" alt="Ghost">
+    </button>
+  </div>
+  <div class="class-choices">
+    <div id="ninjadrop" class="dropdown">
       <button class="class-option" data-class="ninja">
         <img src="images/ninja.png" alt="Ninja">
       </button>
+      <button class="class-option" data-class="ninja2">
+        <img src="images/ninja2.png" alt="Ninja2">
+      </button>
+    </div>
+    <div id="monkeydrop" class="dropdown">
       <button class="class-option" data-class="monkey">
         <img src="images/monkey.png" alt="Monkey">
       </button>
+      <button class="class-option" data-class="monkey2">
+        <img src="images/monkey2.png" alt="Monkey2">
+      </button>
+    </div>
+    <div id="clowndrop" class="dropdown">
       <button class="class-option" data-class="clown">
         <img src="images/clown.png" alt="clown">
       </button>
+      <button class="class-option" data-class="clown2">
+        <img src="images/clown2.png" alt="clown2">
+      </button>
+    </div>
+    <div id="snowmandrop" class="dropdown">
       <button class="class-option" data-class="snowman">
         <img src="images/snowman.png" alt="snowman">
       </button>
+      <button class="class-option" data-class="snowman2">
+        <img src="images/snowman2.png" alt="snowman2">
+      </button>
+      <button class="class-option" data-class="snowman3">
+        <img src="images/snowman3.png" alt="snowman3">
+      </button>
+    </div>
+    <div id="moledrop" class="dropdown">
       <button class="class-option" data-class="mole">
         <img src="images/mole.png" alt="mole">
       </button>
+      <button class="class-option" data-class="mole2">
+        <img src="images/mole2.png" alt="mole2">
+      </button>
+    </div>
+    <div id="aliendrop" class="dropdown">
       <button class="class-option" data-class="alien">
         <img src="images/alien.png" alt="alien">
       </button>
+      <button class="class-option" data-class="alien2">
+        <img src="images/alien2.png" alt="alien2">
+      </button>
+    </div>
+    <div id="scientistdrop" class="dropdown">
       <button class="class-option" data-class="scientist">
         <img src="images/scientist.png" alt="scientist">
       </button>
+      <button class="class-option" data-class="scientist2">
+        <img src="images/scientist2.png" alt="scientist2">
+      </button>
+    </div>
+    <div id="samuraidrop" class="dropdown">
       <button class="class-option" data-class="samurai">
         <img src="images/samurai.png" alt="samurai">
       </button>
+      <button class="class-option" data-class="samurai2">
+        <img src="images/samurai2.png" alt="samurai2">
+      </button>
     </div>
+    <div id="zombiedrop" class="dropdown">
+      <button class="class-option" data-class="zombie">
+        <img src="images/zombie.png" alt="zombie">
+      </button>
+      <button class="class-option" data-class="zombie2">
+        <img src="images/zombie2.png" alt="zombie2">
+      </button>
+    </div>
+    <div id="ghostdrop" class="dropdown">
+      <button class="class-option" data-class="ghost">
+        <img src="images/ghost.png" alt="ghost">
+      </button>
+      <button class="class-option" data-class="ghost2">
+        <img src="images/ghost2.png" alt="ghost2">
+      </button>
+    </div>
+  </div>
+
   
-    <button id="join-btn" disabled>Join</button>
-  </div>
 
-  <canvas id="game"></canvas>
+  <button id="join-btn" disabled>Join</button>
+</div>
 
-  <div id="waiting-screen">
-    <div class="wait-left"></div>
-    <div class="wait-right">
-      <div id="waiting-text">your waiting 4 more players. <br> it might take a bit
-      </div>
+<canvas id="game"></canvas>
+
+<div id="waiting-screen">
+  <div class="wait-left"></div>
+  <div class="wait-right">
+    <div id="waiting-text">your waiting 4 more players. <br> it might take a bit
     </div>
-  </div>  
-
-  <div id="ability-ui" class="disabled">
-    <div id="ability-name">waiting...</div>
-    <div id="ability-timer">Ready</div>
   </div>
-  
-  <div id="overlay-message"></div>
+</div>  
 
-  <div id="unlock-overlay">
-    <div class="unlock-frame"></div>
-    <div class="unlock-strip"></div>
-    <div class="unlock-text">Unlocking...</div>
-  </div>
-  `;
-} else {
-  // If all characters are unlocked, you can load your "full HTML" version here instead
-  root.innerHTML = `
-      <div id="join-screen">
-    <h1>TAG ONLINE</h1>
-    <input id="name" type="text" maxlength="12" placeholder="Enter your name">
-    <div class="class-choices">
-      <button data-copy="ninja" class="class-copys">
-        <img src="images/ninja.png" alt="Ninja">
-      </button>
-      <button data-copy="monkey" class="class-copys">
-        <img src="images/monkey.png" alt="Monkey">
-      </button>
-      <button data-copy="clown" class="class-copys">
-        <img src="images/clown.png" alt="Clown">
-      </button>
-      <button data-copy="snowman" class="class-copys">
-        <img src="images/snowman.png" alt="Snowman">
-      </button>
-      <button data-copy="mole" class="class-copys">
-        <img src="images/mole.png" alt="Mole">
-      </button>
-      <button data-copy="alien" class="class-copys">
-        <img src="images/alien.png" alt="Alien">
-      </button>
-      <button data-copy="scientist" class="class-copys">
-        <img src="images/scientist.png" alt="Scientist">
-      </button>
-      <button data-copy="samurai" class="class-copys">
-        <img src="images/samurai.png" alt="Samurai">
-      </button>
-    </div>
-    <div class="class-choices">
-    <div id="ninjadrop" class="dropdown">
-        <button class="class-option" data-class="ninja">
-          <img src="images/ninja.png" alt="Ninja">
-        </button>
-        <button class="class-option" data-class="ninja2">
-          <img src="images/ninja2.png" alt="Ninja2">
-        </button>
+<div id="ability-ui" class="disabled">
+  <div id="ability-name">waiting...</div>
+  <div id="ability-timer">Ready</div>
+</div>
+
+<div id="overlay-message"></div>
+
+<div id="unlock-overlay">
+  <div class="unlock-frame"></div>
+  <div class="unlock-strip"></div>
+  <div class="unlock-text">Unlocking...</div>
+</div>
+<div id="quest-overlay">
+  <div class="quest-box">
+    <button class="close-btn" onclick="closeQuestOverlay()">×</button>
+    <h2>Quests</h2>
+
+    <div class="quest" data-progress="0" data-goal="3" data-reward="images/zombie.png" data-locked="images/nu.png">
+      <div class="quest-title">
+        <span>Win Zombie Infection as a survivor</span><span class="progress-text">0/3</span>
       </div>
-      <div id="monkeydrop" class="dropdown">
-        <button class="class-option" data-class="monkey">
-          <img src="images/monkey.png" alt="Monkey">
-        </button>
-        <button class="class-option" data-class="monkey2">
-          <img src="images/monkey2.png" alt="Monkey2">
-        </button>
-      </div>
-      <div id="clowndrop" class="dropdown">
-        <button class="class-option" data-class="clown">
-          <img src="images/clown.png" alt="clown">
-        </button>
-        <button class="class-option" data-class="clown2">
-          <img src="images/clown2.png" alt="clown2">
-        </button>
-      </div>
-      <div id="snowmandrop" class="dropdown">
-        <button class="class-option" data-class="snowman">
-          <img src="images/snowman.png" alt="snowman">
-        </button>
-        <button class="class-option" data-class="snowman2">
-          <img src="images/snowman2.png" alt="snowman2">
-        </button>
-      </div>
-      <div id="moledrop" class="dropdown">
-        <button class="class-option" data-class="mole">
-          <img src="images/mole.png" alt="mole">
-        </button>
-        <button class="class-option" data-class="mole2">
-          <img src="images/mole2.png" alt="mole2">
-        </button>
-      </div>
-      <div id="aliendrop" class="dropdown">
-        <button class="class-option" data-class="alien">
-          <img src="images/alien.png" alt="alien">
-        </button>
-        <button class="class-option" data-class="alien2">
-          <img src="images/alien2.png" alt="alien2">
-        </button>
-      </div>
-      <div id="scientistdrop" class="dropdown">
-        <button class="class-option" data-class="scientist">
-          <img src="images/scientist.png" alt="scientist">
-        </button>
-        <button class="class-option" data-class="scientist2">
-          <img src="images/scientist2.png" alt="scientist2">
-        </button>
-      </div>
-      <div id="samuraidrop" class="dropdown">
-        <button class="class-option" data-class="samurai">
-          <img src="images/samurai.png" alt="samurai">
-        </button>
-        <button class="class-option" data-class="samurai2">
-          <img src="images/samurai2.png" alt="samurai2">
-        </button>
+      <div class="progress-container">
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+        <img class="reward-icon" src="" alt="Reward">
       </div>
     </div>
 
-    
-  
-    <button id="join-btn" disabled>Join</button>
-  </div>
-
-  <canvas id="game"></canvas>
-
-  <div id="waiting-screen">
-    <div class="wait-left"></div>
-    <div class="wait-right">
-      <div id="waiting-text">your waiting 4 more players. <br> it might take a bit
+    <div class="quest" data-progress="0" data-goal="10" data-reward="images/ghost.png" data-locked="images/nu.png">
+      <div class="quest-title">
+        <span>Tag people in Zombie Infection</span><span class="progress-text">0/10</span>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+        <img class="reward-icon" src="" alt="Reward">
       </div>
     </div>
-  </div>  
 
-  <div id="ability-ui" class="disabled">
-    <div id="ability-name">waiting...</div>
-    <div id="ability-timer">Ready</div>
+    <div class="quest" data-progress="0" data-goal="4" data-reward="images/charspin.png" data-locked="images/nu.png">
+      <div class="quest-title">
+        <span>Play Zombie Infection</span><span class="progress-text">0/4</span>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+        <img class="reward-icon" src="" alt="Reward">
+      </div>
+    </div>
   </div>
-  
-  <div id="overlay-message"></div>
-
-  <div id="unlock-overlay">
-    <div class="unlock-frame"></div>
-    <div class="unlock-strip"></div>
-    <div class="unlock-text">Unlocking...</div>
-  </div>
-  `;
-}
+</div>
+`;
 
 const socket = io();
 const canvas = document.getElementById("game");
@@ -265,6 +300,13 @@ const classImages = {
   scientist2: new Image(),
   snowman2: new Image(),
   samurai2: new Image(),
+
+  snowman3: new Image(),
+
+  zombie: new Image(),
+  zombie2: new Image(),
+  ghost: new Image(),
+  ghost2: new Image(),
 };
 classImages.snowman.src = "./images/snowman.png";
 classImages.ninja.src = "./images/ninja.png";
@@ -283,6 +325,13 @@ classImages.mole2.src = "./images/mole2.png";
 classImages.scientist2.src = "./images/scientist2.png";
 classImages.clown2.src = "./images/clown2.png";
 classImages.samurai2.src = "./images/samurai2.png";
+
+classImages.snowman3.src = "./images/snowman3.png";
+
+classImages.zombie.src = "./images/zombie.png";
+classImages.zombie2.src = "./images/zombie2.png";
+classImages.ghost.src = "./images/ghost.png";
+classImages.ghost2.src = "./images/ghost2.png";
 
 const decorationImages = {
   bush: new Image(),
@@ -308,6 +357,9 @@ question.src = "./images/nu.png";
 
 const grassBlockImg = new Image();
 grassBlockImg.src = "./images/grass.png";
+
+const zombieBlockImg = new Image();
+zombieBlockImg.src = "./images/zombie infection.png";
 
 const moonBlockImg = new Image();
 moonBlockImg.src = "./images/moon.png";
@@ -342,6 +394,7 @@ const joinScreen = document.getElementById("join-screen");
 const joinBtn = document.getElementById("join-btn");
 const nameInput = document.getElementById("name");
 const classButtons = document.querySelectorAll(".class-option");
+const classcopys = document.querySelectorAll(".class-copys");
 const overlay = document.getElementById("overlay-message");
 
 classButtons.forEach((btn) => {
@@ -356,8 +409,8 @@ classButtons.forEach((btn) => {
 let lastVisibleBtn = null;
 
 if (hasLocked) {
-classButtons.forEach((btn) => {
-  const c = btn.dataset.class;
+classcopys.forEach((btn) => {
+  const c = btn.dataset.copy;
 
   if (!unlocked.has(c)) {
     btn.style.display = "none";
@@ -371,11 +424,64 @@ classButtons.forEach((btn) => {
 });
 }
 
+// Track claimed rewards
+if (!questData.claimed) questData.claimed = {};
+
+function applyQuestProgress() {
+  const quests = document.querySelectorAll(".quest");
+  
+  quests.forEach((quest, index) => {
+    // Map quest index → variable name
+    let varName;
+    if (index === 0) varName = "zomVar";     // Win Zombie Infection
+    if (index === 1) varName = "tagVar";     // Tag people
+    if (index === 2) varName = "playVar";    // Play mode
+
+    const progress = questData[varName] || 0;
+    const goal = parseInt(quest.dataset.goal, 10);
+
+    // Update progress
+    quest.dataset.progress = progress;
+    quest.querySelector(".progress-text").textContent = `${progress}/${goal}`;
+    quest.querySelector(".progress-fill").style.width = `${Math.min((progress / goal) * 100, 100)}%`;
+
+    // Handle reward
+    const rewardIcon = quest.querySelector(".reward-icon");
+    if (progress >= goal) {
+      rewardIcon.src = quest.dataset.reward;
+      rewardIcon.style.cursor = "pointer";
+      rewardIcon.onclick = () => {
+        if (questData.claimed[varName]) {
+          alert("You already claimed this reward!");
+        } else {
+          // Call the appropriate reward function
+          if (index === 0) claime("zombie");
+          if (index === 1) claime("ghost");
+          if (index === 2) Ohlittlemonko();
+
+          questData.claimed[varName] = true; // Mark as claimed
+          saveQuestData(); // Save claim state
+        }
+      };
+    } else {
+      rewardIcon.src = quest.dataset.locked;
+      rewardIcon.style.cursor = "default";
+      rewardIcon.onclick = null;
+    }
+  });
+}
+
+
+
+
+// Run after page loads or after HTML insertion
+applyQuestProgress();
+
 if (hasLocked && lastVisibleBtn) {
   const qBtn = lastVisibleBtn.cloneNode(true);
   const qImg = qBtn.querySelector("img");
   qImg.src = question.src;
-  qBtn.dataset.class = "locked";
+  qBtn.dataset.copy = "locked";
   qBtn.disabled = true;
   qBtn.style.filter = "grayscale(100%)";
   qBtn.style.opacity = "0.4";
@@ -431,6 +537,27 @@ window.addEventListener("keydown", (e) => {
     }
   }
 });
+
+function openQuestOverlay() {
+  document.getElementById("quest-overlay").style.display = "flex";
+  updateQuestProgress();
+}
+
+function closeQuestOverlay() {
+  document.getElementById("quest-overlay").style.display = "none";
+}
+
+function updateQuestProgress() {
+  document.querySelectorAll(".quest").forEach(q => {
+    const progress = parseInt(q.dataset.progress);
+    const goal = parseInt(q.dataset.goal);
+    const percent = (progress / goal) * 100;
+    q.querySelector(".progress-fill").style.width = percent + "%";
+    q.querySelector(".progress-text").textContent = `${progress}/${goal}`;
+    const icon = q.querySelector(".reward-icon");
+    icon.src = progress >= goal ? q.dataset.reward : q.dataset.locked;
+  });
+}
 
 function Ohlittlemonk() {
   const allClasses = [
@@ -526,6 +653,108 @@ function Ohlittlemonk() {
   };
 }
 
+function Ohlittlemonko() {
+  closeQuestOverlay()
+  const allClasses = [
+    "monkey",
+    "clown",
+    "snowman",
+    "mole",
+    "alien",
+    "scientist",
+    "samurai",
+  ];
+  const locked = allClasses.filter((c) => !unlockedClasses.includes(c));
+  let randomChar;
+  do {
+    for (let i = allClasses.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allClasses[i], allClasses[j]] = [allClasses[j], allClasses[i]];
+    }
+
+    randomChar = allClasses[allClasses.length - 1];
+  } while (unlockedClasses.includes(randomChar));
+
+  const overlay = document.getElementById("unlock-overlay");
+  const strip = overlay.querySelector(".unlock-strip");
+  const text = overlay.querySelector(".unlock-text");
+
+  strip.innerHTML = "";
+  strip.style.animation = "none";
+  void strip.offsetWidth;
+  overlay.classList.add("active");
+
+  const sequence = [
+    ...allClasses,
+    ...allClasses,
+    ...allClasses,
+    ...allClasses,
+    ...allClasses,
+    ...allClasses,
+    ...allClasses,
+    ...allClasses,
+    ...allClasses,
+    ...allClasses,
+    ...allClasses,
+    ...allClasses,
+  ];
+  sequence.forEach((cls) => {
+    const img = document.createElement("img");
+    img.src = `images/${cls}.png`;
+    img.dataset.class = cls;
+    strip.appendChild(img);
+  });
+
+  strip.style.animation = "none";
+  strip.style.transform = "translateX(0px)";
+
+  void strip.offsetWidth;
+
+  const imgs = Array.from(strip.querySelectorAll("img"));
+  let targetImg = null;
+  for (let i = imgs.length - 5; i >= 0; i--) {
+    if (imgs[i].dataset.class === randomChar) {
+      targetImg = imgs[i];
+      break;
+    }
+  }
+  if (!targetImg) targetImg = imgs[imgs.length - 5];
+
+  const stripWidth = strip.scrollWidth;
+  const imageCenterOffset = targetImg.offsetLeft + targetImg.offsetWidth / 2;
+  const translateX = imageCenterOffset - stripWidth / 2;
+
+  strip.style.willChange = "transform";
+
+  const duration = 8000;
+  const easing = "cubic-bezier(0.25, 1, 0.5, 1)";
+  const anim = strip.animate(
+    [
+      { transform: "translateX(0px)" },
+      { transform: `translateX(${-translateX}px)` },
+    ],
+    { duration, easing, fill: "forwards" },
+  );
+
+  anim.onfinish = () => {
+    targetImg.classList.add("highlight");
+    text.textContent = `🎉 You unlocked ${randomChar.toUpperCase()}!`;
+
+    setTimeout(() => {
+      unlockedClasses.push(randomChar);
+      saveUnlockedClasses(unlockedClasses);
+      overlay.classList.remove("active");
+      location.reload();
+    }, 2000);
+  };
+}
+
+function claime(name) {
+  unlockedClasses.push(name);
+  saveUnlockedClasses(unlockedClasses);
+  location.reload();
+}
+
 function tryActivateAbility() {
   if (!joined) return;
   if (abilityCooldown > 0) return;
@@ -602,6 +831,28 @@ function tryActivateAbility() {
   if (playerClass === "samurai2") {
     abilityCooldown = 25;
     startAbilityCooldownUI("Dash");
+  }
+
+  if (playerClass === "snowman3") {
+    abilityCooldown = 75;
+    startAbilityCooldownUI("Freeze");
+  }
+
+  if (playerClass === "zombie") {
+    abilityCooldown = 30;
+    startAbilityCooldownUI("Drool");
+  }
+  if (playerClass === "zombie2") {
+    abilityCooldown = 30;
+    startAbilityCooldownUI("Drool");
+  }
+  if (playerClass === "ghost") {
+    abilityCooldown = 50;
+    startAbilityCooldownUI("Ghoul");
+  }
+  if (playerClass === "ghost2") {
+    abilityCooldown = 50;
+    startAbilityCooldownUI("Ghoul");
   }
 }
 
@@ -741,6 +992,29 @@ socket.on("waitingForPlayers", () => {
   }, 30);
 });
 
+socket.on("zominpla", () => {
+  questData["playVar"] = (questData["playVar"] || 0) + 1;
+  saveQuestData(); // save to cookie
+  applyQuestProgress(); // update UI
+  console.log("ok")
+});
+
+
+socket.on("surzom", () => {
+  questData["zomVar"] = (questData["zomVar"] || 0) + 1;
+  saveQuestData(); // save to cookie
+  applyQuestProgress(); // update UI
+  console.log("ok")
+});
+
+
+socket.on("tagvar", () => {
+  questData["tagVar"] = (questData["tagVar"] || 0) + 1;
+  saveQuestData(); // save to cookie
+  applyQuestProgress(); // update UI
+  console.log("ok")
+});
+
 let chosenMapIndex = 0;
 socket.on("mapChosen", (chosen) => {
   if (!joined) return;
@@ -829,7 +1103,7 @@ socket.on("mapVoteStart", ({ maps, names }) => {
     };
 
     const img = document.createElement("img");
-    img.src = `./images/${names[i].toLowerCase()}.png`; // e.g. grass.png, moon.png
+    img.src = `./images/${names[i].toLowerCase()}.png`;
     img.style.width = "100%";
     img.style.borderRadius = "12px";
     img.style.background = "#ff8c8c";
@@ -902,6 +1176,13 @@ socket.on("initGame", () => {
   if (playerClass === "clown2") abilityName.innerText = "Confetti";
   if (playerClass === "snowman2") abilityName.innerText = "Freeze";
   if (playerClass === "samurai2") abilityName.innerText = "Dash";
+
+  if (playerClass === "snowman3") abilityName.innerText = "Freeze";
+
+  if (playerClass === "zombie") abilityName.innerText = "Drool";
+  if (playerClass === "zombie2") abilityName.innerText = "Drool";
+  if (playerClass === "ghost") abilityName.innerText = "Ghoul";
+  if (playerClass === "ghost2") abilityName.innerText = "Ghoul";
   abilityTimer.innerText = "Ready";
 
   if (!joinScreen.classList.contains("fade-out")) {
@@ -933,18 +1214,6 @@ socket.on("freeze", ({ duration, userId }) => {
     }
   }, duration);
 });
-
-function showOverlayMessage(text, color = "white", duration = 3000) {
-  const overlay = document.getElementById("overlay-message");
-  overlay.style.color = color;
-  overlay.style.fontSize = "48px";
-  overlay.style.textAlign = "center";
-  overlay.style.textShadow = "0 0 10px black";
-  overlay.textContent = text;
-  overlay.classList.add("show");
-
-  setTimeout(() => overlay.classList.remove("show"), duration);
-}
 
 socket.on("charSpinClaimed", () => {
   Ohlittlemonk();
@@ -988,6 +1257,12 @@ socket.on("loser", (loserName) => {
   overlay.innerText = `LOSER: ${loserName}`;
   overlay.style.opacity = 1;
   setTimeout(() => (overlay.style.opacity = 0), 3000);
+});
+
+socket.on("message", (text, time) => {
+  overlay.innerText = `${text}`;
+  overlay.style.opacity = 1;
+  setTimeout(() => (overlay.style.opacity = 0), time);
 });
 
 function updateCamera() {
@@ -1100,7 +1375,9 @@ function gameLoop() {
       ? moonBlockImg
       : mapNames[chosenMapIndex]?.toLowerCase().includes("ice")
         ? iceBlockImg
-        : grassBlockImg;
+        : mapNames[chosenMapIndex]?.toLowerCase().includes("zombie infection")
+          ? zombieBlockImg
+          : grassBlockImg;
 
     for (let i = 0; i < cols; i++) {
       for (let j = 0; j < rows; j++) {
@@ -1194,6 +1471,12 @@ function gameLoop() {
     if (p.class === "alien") {
       radius *= 1.3;
     }
+    if (p.class === "zombie") {
+      radius *= 1.3;
+    }
+    if (p.class === "ghost") {
+      radius *= 1.3;
+    }
     if (p.class === "mole") {
       radius *= 1.37;
     }
@@ -1238,6 +1521,17 @@ function gameLoop() {
     }
     if (p.class === "samurai2") {
       radius *= 1.45;
+    }
+
+    if (p.class === "snowman3") {
+      radius *= 1.5;
+    }
+
+    if (p.class === "zombie2") {
+      radius *= 1.25;
+    }
+    if (p.class === "ghost2") {
+      radius *= 1.25;
     }
 
     if (id === socket.id && p.invisible) {
@@ -1301,6 +1595,10 @@ function gameLoop() {
         } else {
           yOffset = -radius * 0.33;
         }
+      }
+
+      if (p.class === "snowman3") {
+        yOffset = -radius * 0.10;
       }
 
       ctx.drawImage(img, pos.x - radius, pos.y - radius + yOffset, size, size);

@@ -26,7 +26,7 @@ const Windows = function () {
                     sumensite
                 </h1>
                 <p class="text-center mt-1 select-none">
-                    Just dont get caught..
+                    Google Alternative
                 </p>
             </div>
         </div>
