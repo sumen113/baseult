@@ -373,6 +373,9 @@ abductImg.src = "./images/abduct.png";
 const freezeImg = new Image();
 freezeImg.src = "./images/freeze.png";
 
+const drool = new Image();
+drool.src = "./images/drool.png";
+
 const portalImg = new Image();
 portalImg.src = "./images/portal.png";
 
@@ -1140,6 +1143,7 @@ socket.on("mapVoteStart", ({ maps, names }) => {
 
 let abductingPlayers = {};
 let frozenPlayers = {};
+let droolingPlayers = {};
 
 socket.on("abductStart", ({ id }) => {
   abductingPlayers[id] = true;
@@ -1200,6 +1204,7 @@ socket.on("reloadPage", () => {
 });
 
 let frozenUntil = 0;
+let droolingUntil = 0;
 
 socket.on("freeze", ({ duration, userId }) => {
   frozenUntil = Date.now() + duration;
@@ -1211,6 +1216,21 @@ socket.on("freeze", ({ duration, userId }) => {
   setTimeout(() => {
     for (let id in frozenPlayers) {
       if (Date.now() > frozenPlayers[id]) delete frozenPlayers[id];
+    }
+  }, duration);
+});
+
+socket.on("drool", ({ duration, userId }) => {
+  console.log(userId)
+  droolingUntil = Date.now() + duration;
+
+  for (let id in players) {
+    if (id !== userId) droolingPlayers[id] = Date.now() + duration;
+  }
+
+  setTimeout(() => {
+    for (let id in droolingPlayers) {
+      if (Date.now() > droolingPlayers[id]) delete droolingPlayers[id];
     }
   }, duration);
 });
@@ -1240,10 +1260,12 @@ socket.on("tryClaimCharSpin", () => {
 
 window.addEventListener("keydown", (e) => {
   if (Date.now() < frozenUntil) return;
+  if (Date.now() < droolingUntil) return;
   keys[e.code] = true;
 });
 window.addEventListener("keyup", (e) => {
   if (Date.now() < frozenUntil) return;
+  if (Date.now() < droolingUntil) return;
   keys[e.code] = false;
 });
 
@@ -1619,6 +1641,17 @@ function gameLoop() {
         const freezeSize = size * 1.6;
         ctx.drawImage(
           freezeImg,
+          pos.x - freezeSize / 2,
+          pos.y - freezeSize / 2,
+          freezeSize,
+          freezeSize,
+        );
+      }
+
+      if (droolingPlayers[id] && drool.complete) {
+        const freezeSize = size * 1.6;
+        ctx.drawImage(
+          drool,
           pos.x - freezeSize / 2,
           pos.y - freezeSize / 2,
           freezeSize,

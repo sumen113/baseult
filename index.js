@@ -227,36 +227,47 @@ function finishVoting() {
   let chosen = winners[Math.floor(Math.random() * winners.length)];
   platforms = MAPS[chosen];
   decorations = DECORATIONS[chosen];
-  currentMapName = MAP_NAMES[chosen]; // 🆕 track current map
+  currentMapName = MAP_NAMES[chosen];
 
   if (currentMapName === "Zombie Infection") {
-    GAME_DURATION = 45; // shorter infection round
-    io.emit("zominpla")
+    GAME_DURATION = 45;
+    io.emit("zominpla");
   } else {
-    GAME_DURATION = 180; // normal duration
+    GAME_DURATION = 180;
   }
 
   gravity = 0.0006; 
   jumpForce = -0.015; 
-
   FRICTION = chosen === 1 ? 0.94 : 0.85; 
   globalThis.ACCEL_MULT = chosen === 1 ? 1.1 : 1.0; 
 
+  // 🆕 RANDOM RESPAWN ALL PLAYERS ON NEW MAP
+  for (let id in players) {
+    const p = players[id];
+    const spawnPlatform = platforms[Math.floor(Math.random() * platforms.length)];
+    p.x = spawnPlatform.x + Math.random() * spawnPlatform.w;
+    p.y = spawnPlatform.y - 0.05;
+    p.vx = 0;
+    p.vy = 0;
+    p.onGround = false;
+  }
+
   io.emit("mapChosen", chosen);
-  io.emit("initGame"); 
+  io.emit("initGame");
   io.emit("state", {
     players,
     platforms,
     portals,
     jumpPads,
     decorations,
-    charSpins,  // 🆕 add this
+    charSpins,
     gameRunning,
     itPlayer,
   });
-  
+
   startGame();
 }
+
 
 function startGame() {
   charSpinSpawnedThisRound = false;
@@ -333,6 +344,7 @@ function resetGame() {
     gameRunning = false;
     itPlayer = null;
     portals = [];    
+    
 
     platforms = MAPS[0];
     decorations = DECORATIONS[0];
@@ -440,7 +452,12 @@ function applyPhysics(dt) {
         p.vy = 0;
         continue; 
       }
-    }
+    
+      if (p.droolingUntil && Date.now() < p.droolingUntil) {
+        p.vx = 0;
+        p.vy = 0;
+        continue; 
+      }}
 
     platforms.forEach((pl) => {
       if (p.x + p.radius > pl.x && p.x - p.radius < pl.x + pl.w) {
@@ -485,7 +502,8 @@ function applyPhysics(dt) {
     const MAX_SPEED = 0.35; 
 
     if (p.input) {
-      const accel = MOVE_ACCEL * (globalThis.ACCEL_MULT || 1) * dt;
+      const activeAccel = p.tempAccel || MOVE_ACCEL;
+      const accel = activeAccel * (globalThis.ACCEL_MULT || 1) * dt;
       if (p.input.left) p.vx -= accel;
       if (p.input.right) p.vx += accel;
     }    
@@ -628,44 +646,55 @@ function applyPhysics(dt) {
     });
   }
 
-  if (itPlayer && gameRunning) {
-    const it = players[itPlayer];
-    for (let id in players) {
-      if (id === itPlayer) continue;
-      const p = players[id];
-      const dx = it.x - p.x;
-      const dy = it.y - p.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+  if (gameRunning) {
+    const now = Date.now();
   
-      if (
-        distance < it.hitRadius + p.hitRadius &&
-        now - (it.lastTagged || 0) > TAG_COOLDOWN
-      ) {
-        it.lastTagged = now;
+    // Loop through every infected player, not just one
+    for (let infectorId in players) {
+      const infector = players[infectorId];
+      if (!infector.isIt) continue; // skip non-infected
   
-        // Infection mode logic:
-        if (currentMapName === "Zombie Infection") {
-          // Tagger STAYS infected
-          p.isIt = true;
-          p.lastTagged = now;
-          io.to(itPlayer).emit("tagvar");
-          const nonInfected = Object.values(players).filter(p => !p.isIt);
-          if (nonInfected.length === 0) {
-            gameRunning = false;
-            io.emit("message", "Infected has won", 3000);
-            resetGame();
+      for (let targetId in players) {
+        if (targetId === infectorId) continue; // can't tag self
+        const target = players[targetId];
+        if (target.isIt) continue; // skip already infected
+  
+        const dx = infector.x - target.x;
+        const dy = infector.y - target.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+  
+        if (
+          distance < infector.hitRadius + target.hitRadius &&
+          now - (infector.lastTagged || 0) > TAG_COOLDOWN
+        ) {
+          infector.lastTagged = now;
+  
+          if (currentMapName === "Zombie Infection") {
+            // Infection spread
+            target.isIt = true;
+            target.lastTagged = now;
+            io.to(targetId).emit("tagvar"); // tell the new infected
+  
+            // check for win condition
+            const nonInfected = Object.values(players).filter(p => !p.isIt);
+            if (nonInfected.length === 0) {
+              gameRunning = false;
+              io.emit("message", "Infected has won", 3000);
+              resetGame();
+            }
+          } else {
+            // Normal tag mode (only one "it" player)
+            infector.isIt = false;
+            itPlayer = targetId;
+            target.isIt = true;
+            target.lastTagged = now;
           }
-        } else {
-          it.isIt = false;
-          itPlayer = id;
-          players[itPlayer].isIt = true;
-          players[itPlayer].lastTagged = now;
-        }
   
-        break;
+          break; // stop checking this infector after tagging one
+        }
       }
     }
-  }  
+  }    
 }
 
 const MS_PER_TICK = 1000 / TICK_RATE;
@@ -988,6 +1017,85 @@ io.on("connection", (socket) => {
         }
       }, dashDuration);
     }
+
+    if (p.class === "zombie") {
+      // Get all players except yourself
+      const possibleTargets = Object.entries(players).filter(([id]) => id !== socket.id);
+    
+      if (possibleTargets.length === 0) return; // No one else to freeze
+    
+      // Pick a random player (can be zombie or non-zombie)
+      const [targetId, targetPlayer] = possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
+    
+      // Apply freeze effect for 2 seconds
+      targetPlayer.droolingUntil = Date.now() + 2000;
+    
+      // Tell everyone who got frozen (for visual effect)
+      io.emit("drool", { targetId, duration: 2000 });
+    
+    }    
+    if (p.class === "ghost") {
+      if (p.speedBoostUntil && Date.now() < p.speedBoostUntil) {
+        // Already active
+        return;
+      }
+    
+      const BOOST_MULT = 1.5; // 50% faster movement
+      const DURATION = 3000; // 3 seconds
+    
+      p.speedBoostUntil = Date.now() + DURATION;
+      p.originalAccel = p.originalAccel || MOVE_ACCEL;
+      p.tempAccel = p.originalAccel * BOOST_MULT;
+    
+    
+      // Automatically end the boost after duration
+      setTimeout(() => {
+        if (p) {
+          p.tempAccel = p.originalAccel;
+          delete p.speedBoostUntil;
+        }
+      }, DURATION);
+    }
+    if (p.class === "zombie2") {
+      // Get all players except yourself
+      const possibleTargets = Object.entries(players).filter(([id]) => id !== socket.id);
+    
+      if (possibleTargets.length === 0) return; // No one else to freeze
+    
+      // Pick a random player (can be zombie or non-zombie)
+      const [targetId, targetPlayer] = possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
+    
+      // Apply freeze effect for 2 seconds
+      targetPlayer.droolingUntil = Date.now() + 2000;
+    
+      // Tell everyone who got frozen (for visual effect)
+      io.emit("drool", { targetId, duration: 2000 });
+    
+    }    
+    if (p.class === "ghost2") {
+      if (p.speedBoostUntil && Date.now() < p.speedBoostUntil) {
+        // Already active
+        return;
+      }
+    
+      const BOOST_MULT = 1.5; // 50% faster movement
+      const DURATION = 3000; // 3 seconds
+    
+      p.speedBoostUntil = Date.now() + DURATION;
+      p.originalAccel = p.originalAccel || MOVE_ACCEL;
+      p.tempAccel = p.originalAccel * BOOST_MULT;
+    
+    
+      // Automatically end the boost after duration
+      setTimeout(() => {
+        if (p) {
+          p.tempAccel = p.originalAccel;
+          delete p.speedBoostUntil;
+        }
+      }, DURATION);
+    }
+    
+    
 
     if (p.class === "ninja2") {
       p.invisibleUntil = Date.now() + 5000; 
