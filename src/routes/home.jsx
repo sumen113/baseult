@@ -7,6 +7,7 @@ import RotateCW from "../icons/rotate-cw";
 import ViewSidebar from "../icons/view-sidebar";
 import Game from "../icons/game";
 import App from "../icons/app";
+import OpenNewWindow from "../icons/open-new-window";
 import SettingsIcon from "../icons/settings";
 import { searchURL } from "../util/searchURL";
 import Settings from "../components/settings";
@@ -66,41 +67,53 @@ const Home = function () {
         this.currentHasURL = this.tabs[this.current].hasOwnProperty("url");
     });
 
+    const updateBrowserURL = (url) => {
+        if (url) {
+            window.history.pushState(
+                { url },
+                "",
+                `#url=${encodeURIComponent(url)}`,
+            );
+        }
+    };
+
     const createIFrame = async (tab) => {
-    const newIFrame = document.createElement("iframe");
-    newIFrame.src = await searchURL(tab.url, this.searchEngine);
-    newIFrame.classList = "window h-full w-full";
+        const newIFrame = document.createElement("iframe");
+        newIFrame.src = await searchURL(tab.url, this.searchEngine);
+        newIFrame.classList = "window h-full w-full";
 
-    if (this.hideUI) {
-        newIFrame.classList.add("fullscreen");
-    }
-
-    newIFrame.dataset.current = "true";
-    newIFrame.addEventListener("load", (e) => {
-        addKeybinds(e.target.contentWindow);
-        interceptLinks(e.target.contentWindow);
-        setIcon(this.current);
-
-        tab.url = window.__uv$config.decodeUrl(
-            e.target.contentWindow.location.pathname.split(
-                window.__uv$config.prefix,
-            )[1],
-        );
-        if (this.search) {
-            this.search.value = this.tabs[this.current].url || "";
+        if (this.hideUI) {
+            newIFrame.classList.add("fullscreen");
         }
 
-        let newTitle = e.target.contentWindow.document.title;
-        if (newTitle !== tab.title) {
-            tab.title = newTitle || tab.url;
-            updateTitles();
-        }
-    });
+        newIFrame.dataset.current = "true";
+        newIFrame.addEventListener("load", (e) => {
+            addKeybinds(e.target.contentWindow);
+            interceptLinks(e.target.contentWindow);
+            setIcon(this.current);
 
-    this.windows.appendChild(newIFrame);
-    return newIFrame;
-};
+            if (window.__uv$config) {
+                tab.url = window.__uv$config.decodeUrl(
+                    e.target.contentWindow.location.pathname.split(
+                        window.__uv$config.prefix,
+                    )[1],
+                );
+            }
+            updateBrowserURL(tab.url);
+            if (this.search) {
+                this.search.value = this.tabs[this.current].url || "";
+            }
 
+            let newTitle = e.target.contentWindow.document.title;
+            if (newTitle !== tab.title) {
+                tab.title = newTitle || tab.url;
+                updateTitles();
+            }
+        });
+
+        this.windows.appendChild(newIFrame);
+        return newIFrame;
+    };
 
     const searchKeydown = async (e) => {
         if (e.key == "Enter" && window.chemical.loaded && e.target.value) {
@@ -160,6 +173,26 @@ const Home = function () {
         }
     };
 
+    const openInNewWindow = async () => {
+        if (
+            this.tabs[this.current] &&
+            this.tabs[this.current].hasOwnProperty("url")
+        ) {
+            if (this.tabs[this.current].hasOwnProperty("iframe")) {
+                this.tabs[this.current].iframe.src = await searchURL(
+                    this.tabs[this.current].url,
+                    this.searchEngine,
+                );
+            } else {
+                this.tabs[this.current].iframe = await createIFrame(
+                    this.tabs[this.current],
+                );
+            }
+            // Refresh the browser
+            window.location.reload();
+        }
+    };
+
     const updateTitles = () => {
         for (let tab of [...document.querySelectorAll(".tab")]) {
             tab.dispatchEvent(new Event("nanoUpdateTitle"));
@@ -170,14 +203,17 @@ const Home = function () {
         if (this.tabs[this.current].hasOwnProperty("iframe")) {
             let newLocation =
                 this.tabs[this.current].iframe.contentWindow.location;
-            if (!newLocation.href.startsWith("about:")) {
+            if (!newLocation.href.startsWith("about:") && window.__uv$config) {
                 let decodedLocation = window.__uv$config.decodeUrl(
                     newLocation.pathname.split(window.__uv$config.prefix)[1],
                 );
 
                 if (decodedLocation !== this.tabs[this.current].url) {
                     this.tabs[this.current].url = decodedLocation;
-                    this.search.value = decodedLocation || "";
+                    updateBrowserURL(decodedLocation);
+                    if (this.search) {
+                        this.search.value = decodedLocation || "";
+                    }
                 }
 
                 let newTitle =
@@ -304,10 +340,12 @@ const Home = function () {
                         toggleSidebar("tabs");
                         break;
                     case "g":
-                        window.location.href = "https://sumensite-production-c9e2.up.railway.app/games";
+                        window.location.href =
+                            "https://sumensite-production-c9e2.up.railway.app/games";
                         break;
                     case "a":
-                        window.location.href = "https://sumensite-production-c9e2.up.railway.app/apps";
+                        window.location.href =
+                            "https://sumensite-production-c9e2.up.railway.app/apps";
                         break;
                     case "s":
                         toggleSidebar("settings");
@@ -338,18 +376,16 @@ const Home = function () {
 
     addKeybinds();
 
-        // --- Auto-load URL from hash like #url=https://example.com ---
+    // --- Auto-load URL from hash like #url=https://example.com ---
     const hash = window.location.hash;
     this.hideUI = false;
-    
+
     if (hash && hash.startsWith("#url=")) {
         const target = decodeURIComponent(hash.slice(5)); // remove '#url='
         console.log("Opening from hash:", target);
         this.hideUI = true;
         newTab(target, target);
     }
-
-
 
     return (
         <div>
@@ -379,7 +415,7 @@ const Home = function () {
             <Windows
                 bind:windows={use(this.windows)}
                 bind:current={use(this.current)}
-                bind:search={use(this.search)}  
+                bind:search={use(this.search)}
                 bind:currentHasURL={use(this.currentHasURL)}
                 bind:tabs={use(this.tabs)}
                 bind:sidebar={use(this.sidebar)}
@@ -387,76 +423,90 @@ const Home = function () {
                 createIFrame={createIFrame}
             />
             {!this.hideUI && (
-            <div class="flex justify-center fixed bottom-0 right-0 left-0">
-                <div class="flex items-center flex-1 gap-2 bg-Base rounded-[26px] p-1.5 my-2 mx-5 max-w-3xl shadow">
-                    <button
-                        on:click={() => toggleSidebar("tabs")}
-                        aria-label="Tabs Sidebar"
-                        title={use`Tabs (${this.actionKey}+A))`}
-                        class="sidebar-animation h-8 w-8 rounded-full flex justify-center items-center ml-1 p-2"
-                        class:bg-Surface0={use(this.tabsActive)}
-                    >
-                        <ViewSidebar class="sidebar-animated" />
-                    </button>
-                    <button
-                        on:click={() => window.location.href = "https://sumensite-production-c9e2.up.railway.app/games"}
-                        aria-label="Games"
-                        title={use`Games (${this.actionKey}+G))`}
-                        class="sidebar-animation h-8 w-8 rounded-full flex justify-center items-center ml-1 p-2"
-                    >
-                        <Game class="sidebar-animated" />
-                    </button>
-                    <button
-                        on:click={() => window.location.href = "https://sumensite-production-c9e2.up.railway.app/apps"}
-                        aria-label="Apps"
-                        title={use`Apps (${this.actionKey}+A))`}
-                        class="sidebar-animation h-8 w-8 rounded-full flex justify-center items-center ml-1 p-2"
-                    >
-                        <App class="sidebar-animated" />
-                    </button>
-                    <button
-                        on:click={() => toggleSidebar("settings")}
-                        aria-label="Settings Sidebar"
-                        title={use`Settings (${this.actionKey}+S)`}
-                        class="sidebar-animation h-8 w-8 rounded-full flex justify-center items-center mr-1 bg-Surface0 p-2"
-                        class:bg-Surface0={use(this.settingsActive)}
-                    >
-                        <SettingsIcon class="sidebar-animated" />
-                    </button>
-                    <div class="bg-Surface0 w-[2px] h-[calc(100%_-_1.25rem)] mr-1"></div>
-                    <input
-                        autofocus
-                        bind:this={use(this.search)}  
-                        on:keydown={searchKeydown}
-                        placeholder="Search or Type URL"
-                        class="flex-1 border-0 bg-transparent outline-none h-10 w-full placeholder:select-none placeholder:text-Subtext0"
-                    />
-                    <button
-                        on:click={back}
-                        aria-label="Back"
-                        title={use`Go Back (${this.actionKey}+Left)`}
-                        class="left-animation h-8 w-8 rounded-full flex justify-center items-center mr-1 bg-Surface0 p-2"
-                    >
-                        <ArrowLeft class="left-animated" />
-                    </button>
-                    <button
-                        on:click={forward}
-                        aria-label="Forward"
-                        title={use`Go Forward (${this.actionKey}+Right)`}
-                        class="right-animation h-8 w-8 rounded-full flex justify-center items-center mr-1 bg-Surface0 p-2"
-                    >
-                        <ArrowRight class="right-animated" />
-                    </button>
-                    <button
-                        on:click={reload}
-                        aria-label="Reload"
-                        title={use`Reload (${this.actionKey}+R)`}
-                        class="rotate-animation h-8 w-8 rounded-full flex justify-center items-center mr-1 bg-Surface0 p-2"
-                    >
-                        <RotateCW class="rotate-animated" />
-                    </button>
+                <div class="flex justify-center fixed bottom-0 right-0 left-0">
+                    <div class="flex items-center flex-1 gap-2 bg-Base rounded-[26px] p-1.5 my-2 mx-5 max-w-3xl shadow">
+                        <button
+                            on:click={() => toggleSidebar("tabs")}
+                            aria-label="Tabs Sidebar"
+                            title={use`Tabs (${this.actionKey}+A))`}
+                            class="sidebar-animation h-8 w-8 rounded-full flex justify-center items-center ml-1 p-2"
+                            class:bg-Surface0={use(this.tabsActive)}
+                        >
+                            <ViewSidebar class="sidebar-animated" />
+                        </button>
+                        <button
+                            on:click={() =>
+                                (window.location.href =
+                                    "https://sumensite-production-c9e2.up.railway.app/games")
+                            }
+                            aria-label="Games"
+                            title={use`Games (${this.actionKey}+G))`}
+                            class="sidebar-animation h-8 w-8 rounded-full flex justify-center items-center ml-1 p-2"
+                        >
+                            <Game class="sidebar-animated" />
+                        </button>
+                        <button
+                            on:click={() =>
+                                (window.location.href =
+                                    "https://sumensite-production-c9e2.up.railway.app/apps")
+                            }
+                            aria-label="Apps"
+                            title={use`Apps (${this.actionKey}+A))`}
+                            class="sidebar-animation h-8 w-8 rounded-full flex justify-center items-center ml-1 p-2"
+                        >
+                            <App class="sidebar-animated" />
+                        </button>
+                        <button
+                            on:click={() => toggleSidebar("settings")}
+                            aria-label="Settings Sidebar"
+                            title={use`Settings (${this.actionKey}+S)`}
+                            class="sidebar-animation h-8 w-8 rounded-full flex justify-center items-center mr-1 bg-Surface0 p-2"
+                            class:bg-Surface0={use(this.settingsActive)}
+                        >
+                            <SettingsIcon class="sidebar-animated" />
+                        </button>
+                        <div class="bg-Surface0 w-[2px] h-[calc(100%_-_1.25rem)] mr-1"></div>
+                        <input
+                            autofocus
+                            bind:this={use(this.search)}
+                            on:keydown={searchKeydown}
+                            placeholder="Search or Type URL"
+                            class="flex-1 border-0 bg-transparent outline-none h-10 w-full placeholder:select-none placeholder:text-Subtext0"
+                        />
+                        <button
+                            on:click={back}
+                            aria-label="Back"
+                            title={use`Go Back (${this.actionKey}+Left)`}
+                            class="left-animation h-8 w-8 rounded-full flex justify-center items-center mr-1 bg-Surface0 p-2"
+                        >
+                            <ArrowLeft class="left-animated" />
+                        </button>
+                        <button
+                            on:click={forward}
+                            aria-label="Forward"
+                            title={use`Go Forward (${this.actionKey}+Right)`}
+                            class="right-animation h-8 w-8 rounded-full flex justify-center items-center mr-1 bg-Surface0 p-2"
+                        >
+                            <ArrowRight class="right-animated" />
+                        </button>
+                        <button
+                            on:click={reload}
+                            aria-label="Reload"
+                            title={use`Reload (${this.actionKey}+R)`}
+                            class="rotate-animation h-8 w-8 rounded-full flex justify-center items-center mr-1 bg-Surface0 p-2"
+                        >
+                            <RotateCW class="rotate-animated" />
+                        </button>
+                        <button
+                            on:click={openInNewWindow}
+                            aria-label="Open in New Window"
+                            title={use`Open in New Window`}
+                            class="new-window-animation h-8 w-8 rounded-full flex justify-center items-center mr-1 bg-Surface0 p-2"
+                        >
+                            <OpenNewWindow class="new-window-animated" />
+                        </button>
+                    </div>
                 </div>
-            </div>
             )}
         </div>
     );
