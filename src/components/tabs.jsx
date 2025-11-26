@@ -6,7 +6,8 @@ import Home from "../icons/home";
 const Tabs = function () {
     this.mount = () => {
         new Sortable(this.root.querySelector(".tabs"), {
-            forceFallback: tr
+            forceFallback: true,
+            animation: 200,
             direction: "vertical",
             dragClass: "dragging",
             filter: ".tab-close",
