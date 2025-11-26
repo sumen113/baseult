@@ -1,6 +1,8 @@
 const Windows = function () {
     window.addEventListener("chemicalLoaded", async () => {
         setTimeout(async () => {
+            for (let tab of this.tabs) {
+                if (
                     tab.hasOwnProperty("url") &&
                     !tab.hasOwnProperty("iframe")
                 ) {
