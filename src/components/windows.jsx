@@ -26,7 +26,7 @@ const Windows = function () {
                     sumensite
                 </h1>
                 <p class="text-center mt-1 select-none">
-                    Just dont get caught..
+                    Lunar is BLOCKED, haha
                 </p>
             </div>
         </div>
