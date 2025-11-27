@@ -28,7 +28,7 @@ const Home = function () {
     {
       name: "Monkey Clicker",
       icon: "monkey-clicker/logo.png",
-      link: "/monkey-clickder",
+      link: "/monkey-clicker",
       newTab: false,
       goldBorder: true,
     },
