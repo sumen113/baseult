@@ -28,8 +28,8 @@ const Home = function () {
     {
       name: "Monkey Clicker",
       icon: "monkey-clicker/logo.png",
-      link: "/monkey-clicker",
-      newTab: false,
+      link: "https://remonk.onrender.com",
+      newTab: true,
       goldBorder: true,
     },
     {
