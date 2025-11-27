@@ -81,6 +81,13 @@ const Home = function () {
       newTab: false,
       goldBorder: false,
     },
+    {
+      name: "Basket Random",
+      icon: "basket-random/logo.png",
+      link: "/basket-random",
+      newTab: false,
+      goldBorder: false,
+    },
   ];
 
   // Load favourites
