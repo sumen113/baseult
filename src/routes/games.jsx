@@ -26,6 +26,13 @@ const Home = function () {
       goldBorder: true,
     },
     {
+      name: "Monkey Clicker",
+      icon: "monkey-clicker/logo.png",
+      link: "/monkey-clickder",
+      newTab: false,
+      goldBorder: true,
+    },
+    {
       name: "Happy Wheels",
       icon: "happy-wheels/logo.png",
       link: "/happy-wheels",
@@ -85,6 +92,13 @@ const Home = function () {
       name: "Basket Random",
       icon: "basket-random/logo.png",
       link: "/basket-random",
+      newTab: false,
+      goldBorder: false,
+    },
+    {
+      name: "FNAF 1",
+      icon: "fnaf/logo.png",
+      link: "/fnaf",
       newTab: false,
       goldBorder: false,
     },
