@@ -11,9 +11,80 @@
             content="Browse the internet securely and privately."
         />
         <script src="/chemical.js"></script>
+        <style>
+   /* Floating Half-Out Tab Button */
+#my-widget-button {
+    position: fixed;
+    bottom: -3px;
+    right: 5px; /* push part of the button offscreen */
+    background: #34bd52;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 20px 20px 0 0; /* rounded left side */
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    z-index: 99999;
+    transition: bottom 0.25s ease, transform 0.2s ease;
+    width: 80px; /* length of tab */
+    text-align: center;
+}
+
+/* When hovering, slide into view */
+#my-widget-button:hover {
+    bottom: 0px; /* slide fully in */
+    transform: scale(1.03);
+}
+
+/* Popup Window */
+#my-widget-popup {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 350px;
+  height: 500px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transform: translateY(30px) scale(0.9);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 99998;
+}
+
+#my-widget-popup.open {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: all;
+}
+
+#my-widget-popup iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+</style>
+
     </head>
     <body>
+        <div id="my-widget-button">Chat</div>
+
+    <!-- Popup Container -->
+    <div id="my-widget-popup">
+      <iframe src="https://chat-theta-bice-35.vercel.app/" frameborder="0"></iframe>
+    </div>
         <div id="app"></div>
         <script type="module" src="/src/main.jsx"></script>
+        <script>
+      const button = document.getElementById("my-widget-button");
+      const popup = document.getElementById("my-widget-popup");
+      
+      button.addEventListener("click", () => {
+          popup.classList.toggle("open");
+          button.innerText = popup.classList.contains("open") ? "Close" : "Chat";
+      });
+      </script>
     </body>
 </html>
